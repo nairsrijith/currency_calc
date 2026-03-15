@@ -1,0 +1,703 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.container {
+    width: 100%;
+    max-width: 900px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    padding: 40px;
+}
+
+/* Instructor Section */
+.instructor-section {
+    text-align: center;
+}
+
+.instructor-section h1 {
+    color: #333;
+    margin-bottom: 10px;
+    font-size: 2.5em;
+}
+
+.instructor-section p {
+    color: #666;
+    margin-bottom: 30px;
+    font-size: 1.1em;
+}
+
+.input-group {
+    margin-bottom: 25px;
+}
+
+.input-group label {
+    display: block;
+    color: #555;
+    font-weight: 600;
+    margin-bottom: 10px;
+    font-size: 1.1em;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 15px;
+    font-size: 1.2em;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    transition: border-color 0.3s;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.btn {
+    padding: 15px 40px;
+    font-size: 1.1em;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    width: 100%;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+}
+
+.btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.error-message {
+    color: #e74c3c;
+    margin-top: 15px;
+    font-size: 1em;
+}
+
+/* Student Section */
+.student-section {
+    display: none;
+}
+
+.student-section.active {
+    display: block;
+}
+
+.student-section h1 {
+    color: #333;
+    margin-bottom: 15px;
+    font-size: 2.2em;
+}
+
+.target-amount {
+    background: #f0f3ff;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    border-left: 5px solid #667eea;
+}
+
+.target-amount p {
+    color: #666;
+    font-size: 1em;
+    margin-bottom: 5px;
+}
+
+.target-amount .amount {
+    font-size: 2em;
+    font-weight: bold;
+    color: #667eea;
+}
+
+.layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+.section {
+    background: #f9f9f9;
+    padding: 20px;
+    border-radius: 10px;
+    border: 2px dashed #ddd;
+    min-height: 400px;
+}
+
+.section h2 {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 1.3em;
+}
+
+.section p {
+    color: #999;
+    font-size: 0.95em;
+    margin-bottom: 15px;
+}
+
+.available-area {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-content: flex-start;
+    min-height: 300px;
+}
+
+.collection-area {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-content: flex-start;
+    min-height: 300px;
+    background: white;
+    border-radius: 8px;
+    padding: 15px;
+    transition: background-color 0.3s;
+}
+
+.collection-area.drag-over {
+    background: #e8f4f8;
+}
+
+.currency-item {
+    cursor: grab;
+    font-weight: 700;
+    font-size: 1.1em;
+    user-select: none;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.currency-item:active {
+    cursor: grabbing;
+}
+
+.currency-item:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+/* Collected item can be removed */
+.collected-currency-item {
+    cursor: pointer;
+    position: relative;
+}
+
+.collected-currency-item::after {
+    content: '✕';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(220, 53, 69, 0.9);
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: bold;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.collected-currency-item:hover::after {
+    opacity: 1;
+}
+
+/* ===== CANADIAN NOTES ===== */
+/* $5 Note - Green (Wilfred Laurier) */
+.note-5 { 
+    width: 130px;
+    height: 66px;
+    background: linear-gradient(90deg, #2d8659 0%, #3aa368 50%, #2d8659 100%);
+    color: white;
+    border-radius: 3px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    position: relative;
+    font-size: 0.95em;
+}
+
+.note-5::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px),
+        repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px);
+    pointer-events: none;
+}
+
+/* $10 Note - Purple (Mackenzie King) */
+.note-10 { 
+    width: 130px;
+    height: 66px;
+    background: linear-gradient(90deg, #6b2c8a 0%, #8b3fa0 50%, #6b2c8a 100%);
+    color: white;
+    border-radius: 3px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    position: relative;
+    font-size: 0.95em;
+}
+
+.note-10::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px),
+        repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px);
+    pointer-events: none;
+}
+
+/* $20 Note - Red (Queen Elizabeth II) */
+.note-20 { 
+    width: 130px;
+    height: 66px;
+    background: linear-gradient(90deg, #c41e3a 0%, #e63946 50%, #c41e3a 100%);
+    color: white;
+    border-radius: 3px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    position: relative;
+    font-size: 0.95em;
+}
+
+.note-20::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px),
+        repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px);
+    pointer-events: none;
+}
+
+/* $50 Note - Orange (William Lyon Mackenzie King) */
+.note-50 { 
+    width: 130px;
+    height: 66px;
+    background: linear-gradient(90deg, #d97706 0%, #f59e0b 50%, #d97706 100%);
+    color: white;
+    border-radius: 3px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    position: relative;
+    font-size: 0.95em;
+}
+
+.note-50::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px),
+        repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px);
+    pointer-events: none;
+}
+
+/* $100 Note - Brown (Robert Borden) */
+.note-100 { 
+    width: 130px;
+    height: 66px;
+    background: linear-gradient(90deg, #7c3f1d 0%, #a0522d 50%, #7c3f1d 100%);
+    color: white;
+    border-radius: 3px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    position: relative;
+    font-size: 0.95em;
+}
+
+.note-100::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px),
+        repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px);
+    pointer-events: none;
+}
+
+/* ===== CANADIAN COINS ===== */
+/* 1¢ Penny - Copper */
+.coin-001 { 
+    width: 78px;
+    height: 78px;
+    background: radial-gradient(circle at 30% 30%, #d4a574 0%, #b8860b 30%, #8b6f47 60%, #704214 100%);
+    color: white;
+    border-radius: 50%;
+    box-shadow: 
+        0 6px 16px rgba(0, 0, 0, 0.4),
+        inset -3px -3px 8px rgba(0, 0, 0, 0.3),
+        inset 3px 3px 8px rgba(255, 255, 255, 0.1);
+    border: 2px solid #5a3a1a;
+    font-size: 0.75em;
+    position: relative;
+}
+
+.coin-001::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    right: 2px;
+    bottom: 2px;
+    border-radius: 50%;
+    background: 
+        repeating-conic-gradient(from 0deg, transparent 0deg 6deg, rgba(255,255,255,0.05) 6deg 12deg);
+    pointer-events: none;
+}
+
+/* 5¢ Nickel - Silver */
+.coin-005 { 
+    width: 84px;
+    height: 84px;
+    background: radial-gradient(circle at 30% 30%, #e8e8e8 0%, #c0c0c0 30%, #a8a8a8 60%, #808080 100%);
+    color: #333;
+    border-radius: 50%;
+    box-shadow: 
+        0 6px 16px rgba(0, 0, 0, 0.4),
+        inset -3px -3px 8px rgba(0, 0, 0, 0.3),
+        inset 3px 3px 8px rgba(255, 255, 255, 0.2);
+    border: 2px solid #606060;
+    font-size: 0.75em;
+    position: relative;
+    font-weight: bold;
+}
+
+.coin-005::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    right: 2px;
+    bottom: 2px;
+    border-radius: 50%;
+    background: 
+        repeating-conic-gradient(from 0deg, transparent 0deg 6deg, rgba(255,255,255,0.05) 6deg 12deg);
+    pointer-events: none;
+}
+
+/* 10¢ Dime - Silver (smallest) */
+.coin-010 { 
+    width: 80px;
+    height: 80px;
+    background: radial-gradient(circle at 30% 30%, #e8e8e8 0%, #c0c0c0 30%, #a8a8a8 60%, #808080 100%);
+    color: #333;
+    border-radius: 50%;
+    box-shadow: 
+        0 6px 16px rgba(0, 0, 0, 0.4),
+        inset -3px -3px 8px rgba(0, 0, 0, 0.3),
+        inset 3px 3px 8px rgba(255, 255, 255, 0.2);
+    border: 2px solid #606060;
+    font-size: 0.7em;
+    position: relative;
+    font-weight: bold;
+}
+
+.coin-010::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    right: 2px;
+    bottom: 2px;
+    border-radius: 50%;
+    background: 
+        repeating-conic-gradient(from 0deg, transparent 0deg 6deg, rgba(255,255,255,0.05) 6deg 12deg);
+    pointer-events: none;
+}
+
+/* 25¢ Quarter - Silver/Bi-metallic effect */
+.coin-025 { 
+    width: 92px;
+    height: 92px;
+    background: radial-gradient(circle at 30% 30%, #f0e68c 0%, #daa520 30%, #b8860b 60%, #8b4513 100%);
+    color: #333;
+    border-radius: 50%;
+    box-shadow: 
+        0 6px 16px rgba(0, 0, 0, 0.4),
+        inset -3px -3px 8px rgba(0, 0, 0, 0.3),
+        inset 3px 3px 8px rgba(255, 255, 255, 0.15);
+    border: 3px solid #704214;
+    font-size: 0.8em;
+    position: relative;
+    font-weight: bold;
+}
+
+.coin-025::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    right: 3px;
+    bottom: 3px;
+    border-radius: 50%;
+    background: 
+        repeating-conic-gradient(from 0deg, transparent 0deg 6deg, rgba(255,255,255,0.05) 6deg 12deg);
+    pointer-events: none;
+}
+
+/* $1 Loonie - Gold/Brass colored */
+.coin-100 { 
+    width: 98px;
+    height: 98px;
+    background: radial-gradient(circle at 30% 30%, #ffd700 0%, #ffb700 30%, #daa520 60%, #b8860b 100%);
+    color: #333;
+    border-radius: 50%;
+    box-shadow: 
+        0 7px 18px rgba(0, 0, 0, 0.45),
+        inset -4px -4px 10px rgba(0, 0, 0, 0.35),
+        inset 4px 4px 10px rgba(255, 255, 255, 0.15);
+    border: 3px solid #8b6f47;
+    font-size: 0.85em;
+    position: relative;
+    font-weight: bold;
+}
+
+.coin-100::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    right: 3px;
+    bottom: 3px;
+    border-radius: 50%;
+    background: 
+        repeating-conic-gradient(from 0deg, transparent 0deg 6deg, rgba(255,255,255,0.05) 6deg 12deg);
+    pointer-events: none;
+}
+
+/* $2 Toonie - Two-toned (gold outer, silver inner) */
+.coin-200 { 
+    width: 104px;
+    height: 104px;
+    background: radial-gradient(circle at 30% 30%, #ffd700 0%, #ffb700 25%, #c0c0c0 40%, #a8a8a8 70%, #808080 100%);
+    color: #333;
+    border-radius: 50%;
+    box-shadow: 
+        0 7px 18px rgba(0, 0, 0, 0.45),
+        inset -4px -4px 10px rgba(0, 0, 0, 0.35),
+        inset 4px 4px 10px rgba(255, 255, 255, 0.15);
+    border: 3px solid #606060;
+    font-size: 0.8em;
+    position: relative;
+    font-weight: bold;
+}
+
+.coin-200::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    right: 3px;
+    bottom: 3px;
+    border-radius: 50%;
+    background: 
+        repeating-conic-gradient(from 0deg, transparent 0deg 6deg, rgba(255,255,255,0.05) 6deg 12deg);
+    pointer-events: none;
+}
+
+.button-group {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.modal.active {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: white;
+    padding: 40px;
+    border-radius: 15px;
+    text-align: center;
+    max-width: 500px;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal-icon {
+    font-size: 4em;
+    margin-bottom: 20px;
+}
+
+.modal-content h2 {
+    color: #333;
+    margin-bottom: 15px;
+    font-size: 1.8em;
+}
+
+.modal-content p {
+    color: #666;
+    margin-bottom: 20px;
+    font-size: 1.1em;
+}
+
+.modal-amount-info {
+    background: #f0f3ff;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 20px 0;
+    font-size: 1.05em;
+}
+
+.modal-amount-info .label {
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.modal-amount-info .value {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #667eea;
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 25px;
+}
+
+.modal-buttons .btn {
+    flex: 1;
+    min-width: 120px;
+}
+
+.btn-secondary {
+    background: #95a5a6;
+    color: white;
+    padding: 15px 30px;
+}
+
+.btn-secondary:hover {
+    background: #7f8c8d;
+    transform: translateY(-2px);
+}
+
+.result-message {
+    margin-top: 20px;
+    padding: 20px;
+    border-radius: 8px;
+    font-size: 1.1em;
+    font-weight: 600;
+    text-align: center;
+    display: none;
+}
+
+.result-message.success {
+    background: #d4edda;
+    color: #155724;
+    border: 2px solid #28a745;
+    display: block;
+}
+
+.result-message.error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 2px solid #f5c6cb;
+    display: block;
+}
+
+@media (max-width: 768px) {
+    .layout {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .container {
+        padding: 20px;
+    }
+
+    .section {
+        min-height: 250px;
+    }
+
+    .button-group {
+        flex-direction: column;
+    }
+}

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canadian Currency Calculator</title>
+    <link rel="stylesheet" href="static/css/style.css">
+</head>
+</head>
+<body>
+    <div class="container">
+        <!-- Instructor Section -->
+        <div class="instructor-section" id="instructorSection">
+            <h1>💰 Currency Calculator</h1>
+            <p>Instructor: Enter the amount the student needs to collect</p>
+            
+            <form id="instructorForm">
+                <div class="input-group">
+                    <label for="targetAmount">Enter Amount (in dollars):</label>
+                    <input 
+                        type="number" 
+                        id="targetAmount" 
+                        placeholder="e.g., 47.35" 
+                        step="0.01" 
+                        min="0"
+                        required>
+                </div>
+                <button type="submit" class="btn btn-primary">Start Activity</button>
+                <div class="error-message" id="errorMessage"></div>
+            </form>
+        </div>
+
+        <!-- Student Section -->
+        <div class="student-section" id="studentSection">
+            <h1>📊 Collect the Right Amount</h1>
+            
+            <div class="target-amount">
+                <p>Target Amount:</p>
+                <div class="amount" id="displayTarget">$0.00</div>
+            </div>
+
+            <div class="layout">
+                <!-- Available Denominations -->
+                <div class="section">
+                    <h2>Available Currency</h2>
+                    <p>(Drag items to the collection area)</p>
+                    <div class="available-area" id="availableArea"></div>
+                </div>
+
+                <!-- Collection Area -->
+                <div class="section">
+                    <h2>Your Collection</h2>
+                    <p>(Drop items here)</p>
+                    <div class="collection-area" id="collectionArea"></div>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-primary" id="submitBtn">Submit Answer</button>
+                <button class="btn btn-secondary" id="backBtn">Give Up</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="modal" id="successModal">
+        <div class="modal-content">
+            <div class="modal-icon">🏆</div>
+            <h2>Congratulations!</h2>
+            <p>You collected the correct amount!</p>
+            <div class="modal-amount-info">
+                <div class="label">Amount Collected:</div>
+                <div class="value" id="successAmount">$0.00</div>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn btn-primary" id="newGameBtn">Start New Game</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Failure Modal -->
+    <div class="modal" id="failureModal">
+        <div class="modal-content">
+            <div class="modal-icon">☹️</div>
+            <h2>Not Quite Right!</h2>
+            <p id="failureMessage">You collected a different amount.</p>
+            <div class="modal-amount-info">
+                <div class="label">Target Amount:</div>
+                <div class="value" id="failureTarget">$0.00</div>
+                <div class="label" style="margin-top: 10px;">Your Amount:</div>
+                <div class="value" id="failureAmount">$0.00</div>
+                <div class="label" style="margin-top: 10px; font-weight: bold;">Difference:</div>
+                <div class="value" id="failureDifference">$0.00</div>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn btn-primary" id="retryBtn">Try Again</button>
+                <button class="btn btn-secondary" id="giveUpBtn">Give Up</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="static/scripts/app.js"></script>
+</body>
+</html>
