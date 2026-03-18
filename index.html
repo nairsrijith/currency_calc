@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Canadian Currency Calculator</title>
+    <title>Correct Amount Match</title>
     <link rel="stylesheet" href="static/css/style.css">
 </head>
 </head>
@@ -11,22 +11,32 @@
     <div class="container">
         <!-- Instructor Section -->
         <div class="instructor-section" id="instructorSection">
-            <h1>💰 Currency Calculator</h1>
-            <p>Instructor: Enter the amount the student needs to collect</p>
+            <h1>💰 Match Amounts</h1>
+            <p>Instructor: Add amounts for the student to collect</p>
             
             <form id="instructorForm">
                 <div class="input-group">
-                    <label for="targetAmount">Enter Amount (in dollars):</label>
-                    <input 
-                        type="number" 
-                        id="targetAmount" 
-                        placeholder="e.g., 47.35" 
-                        step="0.01" 
-                        min="0"
-                        required>
+                    <label for="targetAmount">Enter Amount:</label>
+                    <div class="input-with-button">
+                        <input 
+                            type="number" 
+                            id="targetAmount" 
+                            placeholder="e.g., 47.35" 
+                            step="0.01" 
+                            min="0"
+                            required>
+                        <button type="button" class="btn btn-secondary" id="addAmountBtn">Add Amount</button>
+                    </div>
                 </div>
-                <button type="submit" class="btn btn-primary">Start Activity</button>
                 <div class="error-message" id="errorMessage"></div>
+
+                <button type="submit" class="btn btn-primary" id="startActivityBtn" disabled>Start Activity</button>
+
+                <div id="amountsList" class="amounts-list">
+                    <h3>Amounts to Match:</h3>
+                    <ul id="addedAmounts"></ul>
+                </div>
+                
             </form>
         </div>
 
@@ -36,7 +46,7 @@
             
             <div class="target-amount">
                 <p>Target Amount:</p>
-                <div class="amount" id="displayTarget">$0.00</div>
+                <div class="amount" id="displayTarget">CAD 0.00</div>
             </div>
 
             <div class="layout">
@@ -57,7 +67,7 @@
 
             <div class="button-group">
                 <button class="btn btn-primary" id="submitBtn">Submit Answer</button>
-                <button class="btn btn-secondary" id="backBtn">Reset</button>
+                <button class="btn btn-secondary" id="backBtn">Start New Game</button>
             </div>
         </div>
     </div>
@@ -66,14 +76,19 @@
     <div class="modal" id="successModal">
         <div class="modal-content">
             <div class="modal-icon">🏆</div>
-            <h2>Congratulations!</h2>
+            <h2 id="successMessage">Congratulations!</h2>
             <p>You collected the correct amount!</p>
             <div class="modal-amount-info">
                 <div class="label">Amount Collected:</div>
-                <div class="value" id="successAmount">$0.00</div>
+                <div class="value" id="successAmount">CAD 0.00</div>
+            </div>
+            <div id="successProgress" class="progress-info" style="margin-top: 15px;">
+                <p id="progressText">Progress: 1/1</p>
+                <div id="successTrophies" class="trophy-progress" style="margin-top: 15px;"></div>
             </div>
             <div class="modal-buttons">
-                <button class="btn btn-primary" id="newGameBtn">Start New Game</button>
+                <button class="btn btn-primary" id="nextAmountBtn" style="display: none;">Match Next Amount</button>
+                <button class="btn btn-primary" id="finalNewGameBtn" style="display: none;">View Summary</button>
             </div>
         </div>
     </div>
@@ -86,15 +101,65 @@
             <p id="failureMessage">You collected a different amount.</p>
             <div class="modal-amount-info">
                 <div class="label">Target Amount:</div>
-                <div class="value" id="failureTarget">$0.00</div>
+                <div class="value" id="failureTarget">CAD 0.00</div>
                 <div class="label" style="margin-top: 10px;">Your Amount:</div>
-                <div class="value" id="failureAmount">$0.00</div>
+                <div class="value" id="failureAmount">CAD 0.00</div>
                 <div class="label" style="margin-top: 10px; font-weight: bold;">Difference:</div>
-                <div class="value" id="failureDifference">$0.00</div>
+                <div class="value" id="failureDifference">CAD 0.00</div>
+                <div id="failureTrophies" class="trophy-progress" style="margin-top: 20px;"></div>
             </div>
             <div class="modal-buttons">
                 <button class="btn btn-primary" id="retryBtn">Try Again</button>
-                <button class="btn btn-secondary" id="giveUpBtn">Give Up</button>
+                <button class="btn btn-secondary" id="skipBtn">Skip</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Final Completion Modal -->
+    <div class="modal" id="completionModal">
+        <div class="modal-content">
+            <div class="modal-icon">🎉</div>
+            <h2>Amazing Work!</h2>
+            <p>You successfully collected all the amounts!</p>
+            <div class="modal-amount-info">
+                <div class="value" id="completionMessage" style="font-size: 1.2em; font-weight: bold;">All 1 amounts completed!</div>
+                <div id="completionTrophies" class="trophy-progress" style="margin-top: 20px;"></div>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn btn-primary" id="completeNewGameBtn">Start New Game</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Game Confirmation Modal -->
+    <div class="modal" id="confirmNewGameModal">
+        <div class="modal-content">
+            <div class="modal-icon">❓</div>
+            <h2>Start New Game?</h2>
+            <p>Are you sure you want to end this game and start a new one?</p>
+            <div class="modal-buttons">
+                <button class="btn btn-primary" id="confirmYesBtn">Yes</button>
+                <button class="btn btn-secondary" id="confirmNoBtn">No</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Summary Modal -->
+    <div class="modal" id="summaryModal">
+        <div class="modal-content">
+            <div class="modal-icon">📊</div>
+            <h2>Activity Summary</h2>
+            <div class="modal-amount-info">
+                <div class="label">Correct Matches:</div>
+                <div class="value" id="summaryCorrect">0</div>
+                <div class="label" style="margin-top: 10px;">Incorrect Matches:</div>
+                <div class="value" id="summarySKipped">0</div>
+                <div class="label" style="margin-top: 10px;">Unattempted Matches:</div>
+                <div class="value" id="summaryUnanswered">0</div>
+                <div id="summaryTrophies" class="trophy-progress" style="margin-top: 20px;"></div>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn btn-primary" id="summaryNewGameBtn">Start New Game</button>
             </div>
         </div>
     </div>

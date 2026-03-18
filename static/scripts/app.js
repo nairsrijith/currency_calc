@@ -152,34 +152,159 @@ const DENOMINATIONS = [
     { value: 0.01, label: '1¢', type: 'coin', class: 'coin-001' }
 ];
 
-let targetAmount = 0;
+let targetAmounts = [];
+let currentAmountIndex = 0;
+let completedAmounts = [];
+let remainingAmounts = [];
 let collectedItems = [];
+let amountProgress = [];  // Track status of each amount: {amount, status}
+let consecutiveCorrect = 0;  // Track consecutive correct submissions
 
-// Initialize
-document.getElementById('instructorForm').addEventListener('submit', function(e) {
+// Array of congratulatory messages with increasing intensity
+const congratulatoryMessages = [
+    "That correct!",
+    "Excellent work!",
+    "Amazing job!",
+    "You're on fire! 🔥",
+    "That's incredible! 🌟",
+    "You're unstoppable!",
+    "Absolutely brilliant! 💎",
+    "You're a genius!",
+    "Unbelievable! 🚀"
+];
+
+// Add amount button
+document.getElementById('addAmountBtn').addEventListener('click', function() {
+    const input = document.getElementById('targetAmount');
+    const amount = parseFloat(input.value);
+    const errorMessage = document.getElementById('errorMessage');
+    
+    if (isNaN(amount) || amount <= 0) {
+        errorMessage.textContent = 'Please enter a valid amount greater than 0';
+        return;
+    }
+    
+    // Check if maximum amounts reached (10)
+    if (targetAmounts.length >= 10) {
+        errorMessage.textContent = 'Maximum 10 amounts allowed';
+        return;
+    }
+    
+    // Check for duplicate amounts
+    if (targetAmounts.includes(amount)) {
+        errorMessage.textContent = 'This amount has already been added';
+        return;
+    }
+    
+    // Add to list
+    targetAmounts.push(amount);
+    errorMessage.textContent = '';
+    
+    // Update UI
+    updateAmountsList();
+    input.value = '';
+    input.focus();
+    
+    // Enable start button
+    document.getElementById('startActivityBtn').disabled = false;
+});
+
+function updateAmountsList() {
+    const list = document.getElementById('addedAmounts');
+    list.innerHTML = '';
+    
+    targetAmounts.forEach((amount, index) => {
+        const li = document.createElement('li');
+        li.style.display = 'flex';
+        li.style.justifyContent = 'space-between';
+        li.style.alignItems = 'center';
+        li.style.padding = '10px';
+        li.style.backgroundColor = '#f0f3ff';
+        li.style.marginBottom = '8px';
+        li.style.borderRadius = '5px';
+        
+        const amountSpan = document.createElement('span');
+        amountSpan.textContent = 'CAD ' + amount.toFixed(2);
+        amountSpan.style.fontWeight = 'bold';
+        amountSpan.style.fontSize = '1.1em';
+        
+        const deleteBtn = document.createElement('button');
+        deleteBtn.textContent = 'Remove';
+        deleteBtn.className = 'btn-delete-amount';
+        deleteBtn.style.padding = '5px 15px';
+        deleteBtn.style.fontSize = '0.9em';
+        deleteBtn.style.backgroundColor = '#dc3545';
+        deleteBtn.style.color = 'white';
+        deleteBtn.style.border = 'none';
+        deleteBtn.style.borderRadius = '4px';
+        deleteBtn.style.cursor = 'pointer';
+        deleteBtn.addEventListener('click', function() {
+            targetAmounts.splice(index, 1);
+            updateAmountsList();
+            if (targetAmounts.length === 0) {
+                document.getElementById('startActivityBtn').disabled = true;
+            }
+        });
+        
+        li.appendChild(amountSpan);
+        li.appendChild(deleteBtn);
+        list.appendChild(li);
+    });
+}
+
+// Start Activity button
+document.getElementById('startActivityBtn').addEventListener('click', function(e) {
     e.preventDefault();
-    const amount = parseFloat(document.getElementById('targetAmount').value);
-    
-    if (amount <= 0) {
-        document.getElementById('errorMessage').textContent = 'Please enter a valid amount greater than 0';
-        return;
+    if (targetAmounts.length > 0) {
+        // Shuffle amounts and set up remaining amounts
+        remainingAmounts = [...targetAmounts];
+        completedAmounts = [];
+        consecutiveCorrect = 0;  // Reset consecutive correct counter
+        // Initialize progress tracker with presentedOrder to track the order shown to student
+        amountProgress = targetAmounts.map(amount => ({amount, status: 'pending', presentedOrder: null}));
+        startStudentActivity();
     }
-    
-    if (isNaN(amount)) {
-        document.getElementById('errorMessage').textContent = 'Please enter a valid number';
-        return;
-    }
-
-    targetAmount = amount;
-    startStudentActivity();
 });
 
 function startStudentActivity() {
     document.getElementById('instructorSection').style.display = 'none';
     document.getElementById('studentSection').classList.add('active');
     
-    // Display target amount
-    document.getElementById('displayTarget').textContent = '$' + targetAmount.toFixed(2);
+    // Pick first random amount
+    pickNextAmount();
+}
+
+function pickNextAmount() {
+    if (remainingAmounts.length === 0) {
+        // All amounts completed
+        showCompletionModal();
+        return;
+    }
+    
+    // Pick a random amount from remaining
+    const randomIndex = Math.floor(Math.random() * remainingAmounts.length);
+    const currentAmount = remainingAmounts[randomIndex];
+    
+    // Remove from remaining and add to completed list
+    remainingAmounts.splice(randomIndex, 1);
+    
+    // Find the index of this amount in amountProgress for tracking
+    const progressIndex = amountProgress.findIndex(item => item.amount === currentAmount && item.status === 'pending');
+    window.currentProgressIndex = progressIndex;
+    
+    // Track the order this amount was presented (count of non-pending items + 1)
+    const presentedOrder = amountProgress.filter(item => item.presentedOrder !== null).length + 1;
+    amountProgress[progressIndex].presentedOrder = presentedOrder;
+    
+    // Update current amount display
+    document.getElementById('displayTarget').textContent = 'CAD ' + currentAmount.toFixed(2);
+    
+    // Store current amount for submission
+    window.currentTargetAmount = currentAmount;
+    
+    // Clear collection area
+    collectedItems = [];
+    document.getElementById('collectionArea').innerHTML = '';
     
     // Initialize available denominations
     initializeAvailableDenominations();
@@ -262,32 +387,172 @@ function addToCollection(item) {
     collectionArea.appendChild(collectedItem);
 }
 
+function showGameSummary() {
+    // Calculate summary statistics
+    let correctCount = 0;
+    let skippedCount = 0;
+    let unansweredCount = 0;
+    
+    amountProgress.forEach(item => {
+        if (item.status === 'correct') {
+            correctCount++;
+        } else if (item.status === 'skipped') {
+            skippedCount++;
+        } else if (item.status === 'pending') {
+            unansweredCount++;
+        }
+    });
+    
+    // Update summary modal with counts
+    document.getElementById('summaryCorrect').textContent = correctCount;
+    document.getElementById('summarySKipped').textContent = skippedCount;
+    document.getElementById('summaryUnanswered').textContent = unansweredCount;
+    
+    // Display trophy progress
+    document.getElementById('summaryTrophies').innerHTML = renderTrophyProgress();
+    
+    // Show summary modal
+    document.getElementById('summaryModal').classList.add('active');
+}
+
+function renderTrophyProgress() {
+    let html = '<div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">';
+    
+    // Sort by presentedOrder to show in the order student saw them
+    const sortedProgress = [...amountProgress].sort((a, b) => {
+        if (a.presentedOrder === null && b.presentedOrder === null) return 0;
+        if (a.presentedOrder === null) return 1;
+        if (b.presentedOrder === null) return -1;
+        return a.presentedOrder - b.presentedOrder;
+    });
+    
+    sortedProgress.forEach((item, index) => {
+        let trophy = '';
+        let title = '';
+        let statusClass = '';
+        
+        if (item.status === 'correct') {
+            trophy = '🏆';  // Golden trophy
+            title = 'Correct';
+            statusClass = 'trophy-correct';
+        } else if (item.status === 'skipped') {
+            trophy = '<div class="trophy-with-cross"><span class="trophy-base">🏆</span><span class="trophy-cross">❌</span></div>';  // Trophy with red cross overlay
+            title = 'Skipped';
+            statusClass = 'trophy-skipped';
+        } else {
+            trophy = '🏆';  // Greyed out trophy for pending
+            title = 'Upcoming';
+            statusClass = 'trophy-pending';
+        }
+        
+        html += `<div class="trophy-item ${statusClass}" title="${title}: CAD ${item.amount.toFixed(2)}">${trophy}</div>`;
+    });
+    
+    html += '</div>';
+    return html;
+}
+
 document.getElementById('submitBtn').addEventListener('click', function() {
     const total = collectedItems.reduce((sum, item) => sum + item.value, 0);
+    const targetAmount = window.currentTargetAmount;
     
     // Allow for small floating point rounding errors
     const difference = Math.abs(total - targetAmount);
     if (difference < 0.001) {
-        // Show success modal
+        // Update progress to correct
+        if (window.currentProgressIndex !== undefined) {
+            amountProgress[window.currentProgressIndex].status = 'correct';
+        }
+        
+        // Increment consecutive correct counter
+        consecutiveCorrect++;
+        
+        // Show success modal with next/forfeit options
         playApplauseSound();
-        document.getElementById('successAmount').textContent = '$' + total.toFixed(2);
+        document.getElementById('successAmount').textContent = 'CAD ' + total.toFixed(2);
+        
+        // Update congratulatory message based on consecutive correct submissions
+        const messageIndex = Math.min(consecutiveCorrect - 1, congratulatoryMessages.length - 1);
+        document.getElementById('successMessage').textContent = congratulatoryMessages[messageIndex];
+        
+        // Update progress info - count all attempted (correct, skipped, or incorrectly answered)
+        const totalAmounts = targetAmounts.length;
+        const attemptedCount = amountProgress.filter(item => item.status !== 'pending').length;
+        document.getElementById('progressText').textContent = `Progress: ${attemptedCount}/${totalAmounts}`;
+        
+        // Display trophy progress
+        document.getElementById('successTrophies').innerHTML = renderTrophyProgress();
+        
+        // Track this as completed
+        completedAmounts.push(targetAmount);
+        
+        // Show appropriate buttons
+        if (remainingAmounts.length > 0) {
+            // More amounts to do
+            document.getElementById('nextAmountBtn').style.display = 'block';
+            document.getElementById('finalNewGameBtn').style.display = 'none';
+        } else {
+            // Last amount was completed
+            document.getElementById('nextAmountBtn').style.display = 'none';
+            document.getElementById('finalNewGameBtn').style.display = 'block';
+        }
+        
         document.getElementById('successModal').classList.add('active');
     } else {
         // Show failure modal
         playFailureSound();
+        
+        // Reset consecutive correct counter on wrong answer
+        consecutiveCorrect = 0;
         const actualDifference = total - targetAmount;
-        document.getElementById('failureTarget').textContent = '$' + targetAmount.toFixed(2);
-        document.getElementById('failureAmount').textContent = '$' + total.toFixed(2);
-        document.getElementById('failureDifference').textContent = '$' + Math.abs(actualDifference).toFixed(2) + ' ' + (actualDifference > 0 ? 'too much' : 'short');
+        document.getElementById('failureTarget').textContent = 'CAD ' + targetAmount.toFixed(2);
+        document.getElementById('failureAmount').textContent = 'CAD ' + total.toFixed(2);
+        document.getElementById('failureDifference').textContent = 'CAD ' + Math.abs(actualDifference).toFixed(2) + ' ' + (actualDifference > 0 ? 'too much' : 'short');
+        
+        // Display trophy progress
+        document.getElementById('failureTrophies').innerHTML = renderTrophyProgress();
+        
         document.getElementById('failureModal').classList.add('active');
     }
 });
 
 document.getElementById('backBtn').addEventListener('click', function() {
+    // Show confirmation dialog
+    document.getElementById('confirmNewGameModal').classList.add('active');
+});
+
+document.getElementById('confirmNoBtn').addEventListener('click', function() {
+    // Close confirmation modal and return to game
+    document.getElementById('confirmNewGameModal').classList.remove('active');
+});
+
+document.getElementById('confirmYesBtn').addEventListener('click', function() {
+    // Close confirmation modal and show summary
+    document.getElementById('confirmNewGameModal').classList.remove('active');
+    showGameSummary();
+});
+
+document.getElementById('summaryNewGameBtn').addEventListener('click', function() {
+    // Close summary modal and go back to instructor
+    document.getElementById('summaryModal').classList.remove('active');
     resetToInstructor();
 });
 
-document.getElementById('newGameBtn').addEventListener('click', function() {
+document.getElementById('nextAmountBtn').addEventListener('click', function() {
+    // Close success modal and pick next amount
+    document.getElementById('successModal').classList.remove('active');
+    pickNextAmount();
+});
+
+document.getElementById('finalNewGameBtn').addEventListener('click', function() {
+    // Close success modal and show summary
+    document.getElementById('successModal').classList.remove('active');
+    showGameSummary();
+});
+
+document.getElementById('completeNewGameBtn').addEventListener('click', function() {
+    // Close completion modal and go back to instructor
+    document.getElementById('completionModal').classList.remove('active');
     resetToInstructor();
 });
 
@@ -298,14 +563,30 @@ document.getElementById('retryBtn').addEventListener('click', function() {
     document.getElementById('failureModal').classList.remove('active');
 });
 
-document.getElementById('giveUpBtn').addEventListener('click', function() {
-    resetToInstructor();
+document.getElementById('skipBtn').addEventListener('click', function() {
+    // Update progress to skipped
+    if (window.currentProgressIndex !== undefined) {
+        amountProgress[window.currentProgressIndex].status = 'skipped';
+    }
+    
+    // Close failure modal
+    document.getElementById('failureModal').classList.remove('active');
+    
+    // Check if this is the last amount (remainingAmounts will be empty if current is last)
+    if (remainingAmounts.length === 0) {
+        // This is the last amount, show summary
+        showGameSummary();
+    } else {
+        // Move to next amount
+        pickNextAmount();
+    }
 });
 
 function resetToInstructor() {
     // Hide all modals
     document.getElementById('successModal').classList.remove('active');
     document.getElementById('failureModal').classList.remove('active');
+    document.getElementById('completionModal').classList.remove('active');
     
     // Reset to instructor section
     document.getElementById('instructorSection').style.display = 'block';
@@ -314,5 +595,18 @@ function resetToInstructor() {
     document.getElementById('errorMessage').textContent = '';
     collectedItems = [];
     document.getElementById('collectionArea').innerHTML = '';
-    targetAmount = 0;
+    
+    // Reset amounts
+    targetAmounts = [];
+    completedAmounts = [];
+    remainingAmounts = [];
+    amountProgress = [];
+    consecutiveCorrect = 0;  // Reset consecutive correct counter
+    updateAmountsList();
+    document.getElementById('startActivityBtn').disabled = true;
+}
+
+function showCompletionModal() {
+    // Reset to instructor after completion
+    resetToInstructor();
 }

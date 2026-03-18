@@ -95,6 +95,7 @@ body {
 .error-message {
     color: #e74c3c;
     margin-top: 15px;
+    margin-bottom: 20px;
     font-size: 1em;
 }
 
@@ -429,6 +430,10 @@ body {
     justify-content: center;
 }
 
+.button-group .btn {
+    flex: 1;
+}
+
 /* Modal Styles */
 .modal {
     display: none;
@@ -558,6 +563,161 @@ body {
     display: block;
 }
 
+/* New styles for multiple amounts feature */
+.input-with-button {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.input-with-button input {
+    flex: 1;
+    padding: 15px;
+    font-size: 1.2em;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    transition: border-color 0.3s;
+}
+
+.input-with-button input:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.input-with-button .btn {
+    flex-shrink: 0;
+    width: auto;
+    padding: 15px 25px;
+}
+
+.amounts-list {
+    margin: 25px 0;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    border-left: 5px solid #667eea;
+}
+
+.amounts-list h3 {
+    color: #333;
+    margin-bottom: 15px;
+    font-size: 1.1em;
+}
+
+.amounts-list ul {
+    list-style: none;
+    padding: 0;
+}
+
+.progress-info {
+    text-align: center;
+    font-size: 1.05em;
+    color: #666;
+}
+
+.progress-info p {
+    margin: 0;
+    font-weight: 600;
+}
+
+.trophy-progress {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding: 15px;
+    background: #f9f9f9;
+    border-radius: 8px;
+}
+
+.trophy-item {
+    font-size: 2em;
+    cursor: pointer;
+    transition: transform 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.7);
+    border: 2px solid #ddd;
+    overflow: hidden;
+    position: relative;
+}
+
+.trophy-item:hover {
+    transform: scale(1.2);
+    background: rgba(255, 255, 255, 1);
+}
+
+.trophy-correct {
+    background: rgba(255, 215, 0, 0.2);
+    border-color: #FFD700;
+}
+
+.trophy-correct:hover {
+    background: rgba(255, 215, 0, 0.4);
+}
+
+.trophy-skipped {
+    background: rgba(220, 53, 69, 0.2);
+    border-color: #dc3545;
+}
+
+.trophy-skipped:hover {
+    background: rgba(220, 53, 69, 0.4);
+}
+
+.trophy-with-cross {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2em;
+    line-height: 1;
+    width: 100%;
+    height: 100%;
+}
+
+.trophy-base {
+    font-size: 1em;
+    display: inline-block;
+}
+
+.trophy-cross {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 0.9em;
+    font-weight: bold;
+    color: #dc3545;
+    line-height: 1;
+}
+
+.trophy-pending {
+    opacity: 0.4;
+    background: rgba(200, 200, 200, 0.2);
+    border-color: #ccc;
+}
+
+.trophy-pending:hover {
+    opacity: 0.6;
+    background: rgba(200, 200, 200, 0.3);
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #5a6268;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(108, 117, 125, 0.4);
+}
+
 @media (max-width: 768px) {
     .layout {
         grid-template-columns: 1fr;
@@ -574,5 +734,13 @@ body {
 
     .button-group {
         flex-direction: column;
+    }
+
+    .input-with-button {
+        flex-direction: column;
+    }
+
+    .input-with-button .btn {
+        width: 100%;
     }
 }
