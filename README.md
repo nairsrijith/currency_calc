@@ -5,7 +5,19 @@ An interactive educational web application designed to help students learn about
 ## 📋 Features
 
 - **Realistic Canadian Currency**: Beautiful visual representations of all Canadian notes ($5, $10, $20, $50, $100) and coins (1¢, 5¢, 10¢, 25¢, $1, $2)
+- **Multiple Amount Matching**: Instructor can add up to 10 different amounts for students to practice
 - **Drag-and-Drop Interface**: Intuitive drag-and-drop system for collecting currency
+- **Smart Validation**: 
+  - Prevents duplicate amounts from being added
+  - Maximum 10 amounts per session
+- **Progress Tracking**: Visual trophy system showing:
+  - 🏆 Gold trophies for correct matches
+  - 🏆❌ Crossed-out trophies for skipped amounts
+  - ⚪ Greyed-out trophies for unattempted amounts
+- **Skip & Retry Options**: Students can skip challenging amounts and try again later
+- **Activity Summary**: Complete summary showing correct, incorrect, and unattempted matches
+- **Rotating Congratulations**: Messages increase in intensity with consecutive correct answers:
+  - "Congratulations!" → "Excellent work!" → "Amazing job!" → "You're on fire! 🔥" → ... → "Unbelievable! 🚀"
 - **Sound Effects**: Immersive audio feedback:
   - Piggy bank sound when adding currency
   - ATM beep sequence when removing currency
@@ -15,21 +27,47 @@ An interactive educational web application designed to help students learn about
 - **Easy Error Correction**: Click on collected items to remove them
 - **No Installation Required**: Runs directly in any modern web browser
 
-## 🎮 How to Use
+## � Recent Updates
+
+### Version 2.0 - Multi-Amount & Enhanced Feedback
+
+**Major Features Added:**
+- ✅ **Multiple Amount Support**: Instructors can now create sessions with up to 10 different amounts
+- ✅ **Random Amount Presentation**: Amounts are presented to students in random order for better learning
+- ✅ **Skip Functionality**: Students can skip challenging amounts and come back to them
+- ✅ **Progress Tracking**: Trophy system shows real-time progress with visual indicators
+- ✅ **Activity Summary**: Complete breakdown of performance with trophy visualization
+- ✅ **Intelligent Validation**: Prevents duplicate amounts and enforces maximum limits
+- ✅ **Dynamic Messages**: Congratulations messages escalate in intensity with consecutive correct answers
+- ✅ **Simplified Navigation**: One-click confirmation flow for starting new games
+
+**User Experience Improvements:**
+- Better spacing and layout consistency
+- Equal-width buttons for improved visual design
+- Clearer feedback at each step of the activity
+- More engaging visual progression indicators
+- Confirmation dialogs to prevent accidental game resets
+
+## �🎮 How to Use
 
 ### For Instructors
 
 1. **Open the Application**: Open `index.html` in any web browser
-2. **Enter Target Amount**: 
-   - You'll see the instructor interface with a text input field
-   - Enter the dollar amount the student needs to collect (e.g., `47.35`)
-   - Click **"Start Activity"** button
-3. **Student Activity Begins**: The student interface will now be displayed to the student
+2. **Add Multiple Amounts**: 
+   - You'll see the instructor interface with an input field
+   - Enter the first dollar amount the student needs to collect (e.g., `47.35`)
+   - Click **"Add Amount"** button
+   - Repeat to add up to 10 different amounts
+   - **Note**: Duplicate amounts are not allowed and a maximum of 10 amounts can be added
+3. **Start the Activity**: 
+   - Click **"Start Activity"** button when you've added all desired amounts
+   - The student interface will now be displayed with a random amount to match
 
 ### For Students
 
 1. **View Target Amount**: 
    - The target amount is displayed at the top of the student section
+   - Amounts are presented randomly from the instructor's list
    
 2. **Collect Currency**:
    - **Left Panel**: Shows all available Canadian currency (notes and coins)
@@ -47,15 +85,32 @@ An interactive educational web application designed to help students learn about
    - A modal dialog will appear with the result
 
 5. **Success (Correct Answer)**: 🏆
-   - Trophy and congratulations message appear
+   - Dynamic congratulations message appears (intensifies with consecutive correct answers)
    - Shows the amount you collected
-   - Click **"Start New Game"** to create a new challenge
+   - Trophy progress displays showing your performance on all amounts
+   - If more amounts remain: Click **"Match Next Amount"** to continue
+   - If last amount: Click **"View Summary"** to see your complete activity results
 
 6. **Failure (Incorrect Answer)**: ☹️
    - Shows the target amount, your amount, and the difference
+   - Trophy progress displays your current performance
    - Two options:
-     - **"Try Again"**: Removes your collection but keeps the same target amount
-     - **"Give Up"**: Takes you back to the instructor interface to set a new amount
+     - **"Try Again"**: Clears your collection but keeps the same target amount
+     - **"Skip"**: Marks this amount as skipped and moves to the next amount
+   - If on the last amount and you skip: Taken directly to summary page
+
+7. **Activity Summary**: 📊
+   - Shows complete breakdown:
+     - Number of correct matches
+     - Number of incorrect/skipped matches
+     - Number of unattempted matches
+   - Visual trophy progress display
+   - Click **"Start New Game"** to return to instructor section for a new session
+
+8. **Start New Game Confirmation**: ❓
+   - When clicking "Start New Game" from the main area, a confirmation dialog appears
+   - Confirms you want to end the current game
+   - Option to view summary before completely exiting
 
 ## 💻 Technical Details
 
